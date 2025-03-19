@@ -14,8 +14,16 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+import com.example.cryptocurrencyapp.common.Screen
+import com.example.cryptocurrencyapp.presentation.coin_details.CoinDetailScreen
+import com.example.cryptocurrencyapp.presentation.coins_list.CoinListScreen
 import com.example.cryptocurrencyapp.presentation.theme.CryptocurrencyAppTheme
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -23,9 +31,10 @@ class MainActivity : ComponentActivity() {
         setContent {
             CryptocurrencyAppTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting(
-                        modifier = Modifier.padding(innerPadding)
-                    )
+                    Box(modifier = Modifier.padding(innerPadding)) {
+                        NavHost()
+                    }
+
                 }
             }
         }
@@ -33,23 +42,23 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun Greeting( modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello Still Working !",
-        modifier = modifier
-    )
-    Box(
-        modifier = Modifier.fillMaxSize(),
-        contentAlignment = Alignment.Center
-    ){
-        CircularProgressIndicator()
+fun NavHost(modifier: Modifier = Modifier) {
+    val navController = rememberNavController()
+    NavHost(
+        navController = navController,
+        startDestination = Screen.CoinListScreen.route
+    ) {
+        composable(
+            route = Screen.CoinListScreen.route
+        ) {
+            CoinListScreen(navController)
+        }
+        composable(
+            route = Screen.CoinDetailScreen.route + "/{coinId}"
+        ) {
+            CoinDetailScreen()
+        }
     }
+    
 }
 
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    CryptocurrencyAppTheme {
-        Greeting()
-    }
-}
